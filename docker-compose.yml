@@ -1,48 +1,18 @@
-version: '3'
+version: '3.7'
 services:
-  tango-db:
-    image: tangocs/mysql:9.2.2
-    container_name: tango-db
-    ports:
-      - "9999:3306"
+  mysql:
+    image: registry.gitlab.com/tango-controls/docker/mysql:5
     environment:
      - MYSQL_ROOT_PASSWORD=root
   tango-cs:
-    image: tangocs/tango-cs:9
-    container_name: tango-cs
+    image: registry.gitlab.com/tango-controls/docker/tango-cs:9
     ports:
      - "10000:10000"
     environment:
      - TANGO_HOST=localhost:10000
-     - MYSQL_HOST=tango-db:3306
+     - MYSQL_HOST=mysql:3306
      - MYSQL_USER=tango
      - MYSQL_PASSWORD=tango
      - MYSQL_DATABASE=tango
     depends_on:
-      - tango-db
-  vcats:
-    image: vcats
-    container_name: vcats
-    ports:
-      - "5000:5000"
-    environment:
-      - TANGO_HOST=tango-cs:10000
-      - PYTHONUNBUFFERED=1
-    depends_on:
-     - tango-cs
-  tc_tui:
-    image: tc_tui
-    container_name: tc_tui
-    environment:
-      - TANGO_HOST=tango-cs:10000
-      - PYTHONUNBUFFERED=1
-    depends_on:
-      - tango-cs
-  sardana:
-    image: sardana
-    container_name: sardana
-    environment:
-      - TANGO_HOST=tango-cs:10000
-      - PYTHONUNBUFFERED=1
-    depends_on:
-      - tango-cs
+     - mysql
